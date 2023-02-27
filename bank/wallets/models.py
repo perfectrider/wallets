@@ -13,8 +13,8 @@ class Wallet(models.Model):
 
 class Transaction(models.Model):
     sender = models.ForeignKey(BankUser)
-    reciever = models.ForeignKey(BankUser)
+    receiver = models.ForeignKey(BankUser)
     transfer_amount = models.IntegerField()
-    comission = models.IntegerField()
+    commission = models.IntegerField()
     status = models.Choices()
     timestamp = models.DateTimeField(auto_now_add=True)

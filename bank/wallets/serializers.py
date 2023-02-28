@@ -3,7 +3,7 @@ from wallets.models import Customer, Wallet, Transaction
 from django.contrib.auth.models import User
 
 class WalletSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.name')
+    owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = Wallet

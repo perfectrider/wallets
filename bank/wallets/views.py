@@ -1,8 +1,9 @@
+from django.contrib.auth.models import User
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from wallets.models import Wallet, Customer
-from wallets.serializers import WalletSerializer, CustomerSerializer
+from wallets.models import Wallet, User
+from wallets.serializers import WalletSerializer, UserSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import mixins, generics
@@ -81,21 +82,25 @@ class WalletsList(generics.ListCreateAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
+    def perform_create(self, serializer):
+        # another way to saving instance and processing info
+        serializer.save(owner=self.request.user)
+
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
     '''Detail wallet view'''
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
-class CustomerList(generics.ListAPIView):
+class UserList(generics.ListAPIView):
     '''All users view'''
 
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-class CustomerDetail(generics.RetrieveAPIView):
+class UserDetail(generics.RetrieveAPIView):
     '''User detail view'''
 
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 

@@ -1,9 +1,11 @@
 from rest_framework import serializers
 from wallets.models import Customer, Wallet, Transaction
 from django.contrib.auth.models import User
+from wallets.generators import walletname
 
 class WalletSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    name = serializers.ReadOnlyField()
 
     class Meta:
         model = Wallet

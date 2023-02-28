@@ -81,7 +81,7 @@ class WalletsList(generics.ListCreateAPIView):
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
     def perform_create(self, serializer):
         # current user is owner func
@@ -92,16 +92,19 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
+    permission_classes = [permissions.IsAdminUser]
 
 class UserList(generics.ListAPIView):
     '''All users view'''
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
 
 class UserDetail(generics.RetrieveAPIView):
     '''User detail view'''
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
 

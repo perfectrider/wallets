@@ -10,8 +10,8 @@ def snippet_list(request):
     List all code snippets, or create a new snippet.
     """
     if request.method == 'GET':
-        snippets = Wallet.objects.all()
-        serializer = WalletSerializer(snippets, many=True)
+        wallets = Wallet.objects.all()
+        serializer = WalletSerializer(wallets, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':

@@ -56,19 +56,29 @@ from rest_framework import mixins, generics
 
 # ----- Mixins Realization -----
 
-class WalletsList(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  generics.GenericAPIView):
-    '''There is a using of GenericAPIView in this class,
-    and we add List and Create models mixins here.'''
+# class WalletsList(mixins.ListModelMixin,
+#                   mixins.CreateModelMixin,
+#                   generics.GenericAPIView):
+#     '''There is a using of GenericAPIView in this class,
+#     and we add List and Create models mixins here.'''
+#
+#     queryset = Wallet.objects.all()
+#     serializer_class = WalletSerializer
+#
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+#
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
 
+# ---------------------------
+
+# ----- only Generic Api Views -----
+
+class WalletsList(generics.ListCreateAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-# ---------------------------
+class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Wallet.objects.all()
+    serializer_class = WalletSerializer

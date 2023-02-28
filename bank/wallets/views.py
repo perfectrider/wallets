@@ -6,7 +6,7 @@ from wallets.models import Wallet, User
 from wallets.serializers import WalletSerializer, UserSerializer
 from rest_framework.views import APIView
 from django.http import Http404
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, permissions
 
 
 # ----- Realization with APIView -----
@@ -81,9 +81,10 @@ class WalletsList(generics.ListCreateAPIView):
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # another way to saving instance and processing info
+        # current user is owner func
         serializer.save(owner=self.request.user)
 
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):

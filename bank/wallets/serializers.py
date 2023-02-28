@@ -7,7 +7,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wallet
-        fields = ['owner', 'name', 'type', 'currency', 'balance', 'created_on', 'modified_on']
+        fields = ['id', 'owner', 'name', 'type', 'currency', 'balance', 'created_on', 'modified_on']
 
 class UserSerializer(serializers.ModelSerializer):
     wallets = serializers.PrimaryKeyRelatedField(many=True, queryset=Wallet.objects.all())

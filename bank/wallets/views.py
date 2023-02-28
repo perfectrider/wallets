@@ -7,6 +7,7 @@ from wallets.serializers import WalletSerializer, UserSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import mixins, generics, permissions
+from wallets.permissions import IsAdminOrOwner
 
 
 # ----- Realization with APIView -----
@@ -92,7 +93,7 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrOwner]
 
 class UserList(generics.ListAPIView):
     '''All users view'''
@@ -100,6 +101,7 @@ class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
+
 
 class UserDetail(generics.RetrieveAPIView):
     '''User detail view'''

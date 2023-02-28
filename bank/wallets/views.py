@@ -1,8 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from wallets.models import Wallet
-from wallets.serializers import WalletSerializer
+from wallets.models import Wallet, Customer
+from wallets.serializers import WalletSerializer, CustomerSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import mixins, generics
@@ -76,9 +76,26 @@ from rest_framework import mixins, generics
 # ----- only Generic Api Views -----
 
 class WalletsList(generics.ListCreateAPIView):
+    '''All wallets view'''
+
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Detail wallet view'''
+
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
+
+class CustomerList(generics.ListAPIView):
+    '''All users view'''
+
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+class CustomerDetail(generics.RetrieveAPIView):
+    '''User detail view'''
+
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+

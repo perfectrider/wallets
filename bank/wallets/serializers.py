@@ -11,9 +11,16 @@ class WalletSerializer(serializers.ModelSerializer):
         model = Wallet
         fields = ['id', 'owner', 'name', 'type', 'currency', 'balance', 'created_on', 'modified_on']
 
+class WalletNameSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Wallet
+        fields = ['id', 'name']
+
 class UserSerializer(serializers.ModelSerializer):
     # wallets = serializers.PrimaryKeyRelatedField(many=True, queryset=Wallet.objects.all())
-    wallets = WalletSerializer(many=True)
+    wallets = WalletNameSerializer(many=True)
     # in ModelSerializers not included reverse relation, because we added
     # this field here.
 

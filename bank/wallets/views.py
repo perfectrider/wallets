@@ -47,20 +47,18 @@ class UserRegistr(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class WalletsList(viewsets.ModelViewSet):
+class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
     '''List of wallets. List is avaliable only for admin'''
 
-    queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = Wallet.objects.filter(owner=self.request.user)
+        return queryset
 
-class WalletCreate(generics.CreateAPIView):
-    '''Detail wallet view'''
-
-    queryset = Wallet.objects.all()
-    serializer_class = WalletSerializer
-    permission_classes = [IsAdminOrOwner]
+    def get_object(self):
+        return Wallet.objects.get(name=self.name)
 
     def perform_create(self, serializer):
         # current user is owner func

@@ -10,6 +10,7 @@ class WalletSerializer(serializers.ModelSerializer):
         model = Wallet
         fields = ['id', 'owner', 'name', 'type', 'currency', 'balance', 'created_on', 'modified_on']
 
+
 class UserSerializer(serializers.ModelSerializer):
     wallets = serializers.StringRelatedField(many=True)
 

@@ -31,7 +31,7 @@ class Wallet(models.Model):
         return f'{self.name}'
 
     def get_absolute_url(self):
-        return reverse('name', kwargs={'name_slug': self.slug})
+        return reverse('wallet_detail', kwargs={'slug': self.name})
 
 
 class Transaction(models.Model):

@@ -30,9 +30,6 @@ class Wallet(models.Model):
     def __str__(self):
         return f'{self.name}'
 
-    def get_absolute_url(self):
-        return reverse('wallet_detail', kwargs={'slug': self.name})
-
 
 class Transaction(models.Model):
     '''Describes departure and destination points, amount of transaction and some details.'''

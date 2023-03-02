@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import status, viewsets, request
 from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from wallets.models import Wallet, User
 from wallets.serializers import WalletSerializer, UserSerializer, UserRegistrSerializer
@@ -52,13 +53,11 @@ class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
 
     serializer_class = WalletSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'name'
 
     def get_queryset(self):
         queryset = Wallet.objects.filter(owner=self.request.user)
         return queryset
-
-    def get_object(self):
-        return Wallet.objects.get(name=self.name)
 
     def perform_create(self, serializer):
         # current user is owner func

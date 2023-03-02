@@ -9,6 +9,7 @@ class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['id', 'owner', 'name', 'type', 'currency', 'balance', 'created_on', 'modified_on']
+        lookup_field = 'name'
 
 
 class UserSerializer(serializers.ModelSerializer):

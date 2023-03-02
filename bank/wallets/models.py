@@ -1,17 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 
-
-class Customer(models.Model):
-    '''User ob bank application'''
-
-    name = models.CharField(max_length=50)
-    created_on = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.name}'
 
 class Wallet(models.Model):
     '''Customer wallet. Each customer cannot create more than 5 wallets'''
@@ -29,7 +20,7 @@ class Wallet(models.Model):
     ]
 
     owner = models.ForeignKey(User, on_delete=models.PROTECT, related_name='wallets')
-    name = models.CharField(max_length=8)
+    name = models.SlugField(max_length=8)
     type = models.CharField(max_length=10, choices=CARD_TYPE_CHOICES)
     currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES)
     balance = models.DecimalField(default=0, max_digits=12, decimal_places=2)
@@ -39,6 +30,9 @@ class Wallet(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def get_absolute_url(self):
+        return reverse('name', kwargs={'name_slug': self.slug})
+
 
 class Transaction(models.Model):
     '''Describes departure and destination points, amount of transaction and some details.'''
@@ -46,5 +40,5 @@ class Transaction(models.Model):
     sender = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='from_wallet')
     receiver = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='to_wallet')
     transfer_amount = models.DecimalField(max_digits=12, decimal_places=2)
-    # status = models.CharField(max_length=6)
+    status = models.CharField(max_length=6)
     timestamp = models.DateTimeField(auto_now_add=True)

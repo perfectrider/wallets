@@ -26,7 +26,7 @@ class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
 
     def perform_create(self, serializer):
         # current user is owner func
-        serializer.save(owner=self.request.user, name=walletname.name_gen())
+        serializer.save(owner=self.request.user, name=walletname.namegen())
 
 
 class UsersList(generics.ListAPIView):

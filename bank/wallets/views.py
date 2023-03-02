@@ -1,55 +1,20 @@
-from django.contrib.auth.models import User
-from rest_framework import status, viewsets, request
-from rest_framework.decorators import api_view
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
+from rest_framework import viewsets
 from wallets.models import Wallet, User
-from wallets.serializers import WalletSerializer, UserSerializer, UserRegistrSerializer
-from rest_framework.views import APIView
-from django.http import Http404
+from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer
 from rest_framework import mixins, generics, permissions
-from wallets.permissions import IsAdminOrOwner
 from wallets.generators import walletname
 
 
-# class WalletsList(generics.ListCreateAPIView):
-#     '''All wallets view'''
-#
-#     queryset = Wallet.objects.all()
-#     serializer_class = WalletSerializer
-#     permission_classes = [permissions.IsAdminUser]
-#
-#     def perform_create(self, serializer):
-#         # current user is owner func
-#         serializer.save(owner=self.request.user, name=walletname.NameGen())
-#
-# class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
-#     '''Detail wallet view'''
-#
-#     queryset = Wallet.objects.all()
-#     serializer_class = WalletSerializer
-#     permission_classes = [IsAdminOrOwner]
-
-
-# class UserList(generics.ListAPIView):
-#     '''All users view'''
-#
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAdminUser]
-
-# --------------------------------------------
-
-class UserRegistr(generics.CreateAPIView):
-    '''Regisrtation of new user.'''
+class UserRegister(generics.CreateAPIView):
+    '''Registration of new user.'''
 
     queryset = User.objects.all()
-    serializer_class = UserRegistrSerializer
+    serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
 
 class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
-    '''List of wallets. List is avaliable only for admin'''
+    '''List of wallets. List is available only for admin'''
 
     serializer_class = WalletSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -61,13 +26,12 @@ class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
 
     def perform_create(self, serializer):
         # current user is owner func
-        serializer.save(owner=self.request.user, name=walletname.NameGen())
+        serializer.save(owner=self.request.user, name=walletname.namegen())
 
 
 class UsersList(generics.ListAPIView):
-    '''List of wallets. List is avaliable only for admin'''
+    '''List of wallets. List is available only for admin'''
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
-

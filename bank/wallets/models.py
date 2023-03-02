@@ -1,22 +1,19 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
-from django.urls import reverse
 
 
 class Wallet(models.Model):
     '''Customer wallet. Each customer cannot create more than 5 wallets'''
 
     CARD_TYPE_CHOICES = [
-        ( 'Visa', 'Visa'),
-        ('MasterCard', 'Master Card')
+        ('Visa', 'Visa'),
+        ('MasterCard', 'Master Card'),
     ]
 
     CURRENCY_CHOICES = [
         ('RUB', 'Ruble'),
         ('USD', 'Dollar'),
         ('EUR', 'Euro'),
-
     ]
 
     owner = models.ForeignKey(User, on_delete=models.PROTECT, related_name='wallets')

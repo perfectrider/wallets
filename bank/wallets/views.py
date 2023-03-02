@@ -39,13 +39,24 @@ from wallets.generators import walletname
 
 # --------------------------------------------
 
-class WalletsList(generics.ListAPIView):
+class WalletsList(viewsets.ModelViewSet):
     '''List of wallets. List is avaliable only for admin'''
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
     permission_classes = [permissions.IsAdminUser]
 
+
+class WalletCreate(generics.CreateAPIView):
+    '''Detail wallet view'''
+
+    queryset = Wallet.objects.all()
+    serializer_class = WalletSerializer
+    permission_classes = [IsAdminOrOwner]
+
+    def perform_create(self, serializer):
+        # current user is owner func
+        serializer.save(owner=self.request.user, name=walletname.NameGen())
 
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is avaliable only for admin'''

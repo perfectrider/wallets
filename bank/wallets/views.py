@@ -3,7 +3,7 @@ from rest_framework import status, viewsets, request
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from wallets.models import Wallet, User
-from wallets.serializers import WalletSerializer, UserSerializer
+from wallets.serializers import WalletSerializer, UserSerializer, UserRegistrSerializer
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import mixins, generics, permissions
@@ -39,6 +39,14 @@ from wallets.generators import walletname
 
 # --------------------------------------------
 
+class UserRegistr(generics.CreateAPIView):
+    '''Regisrtation of new user.'''
+
+    queryset = User.objects.all()
+    serializer_class = UserRegistrSerializer
+    permission_classes = [permissions.AllowAny]
+
+
 class WalletsList(viewsets.ModelViewSet):
     '''List of wallets. List is avaliable only for admin'''
 
@@ -57,6 +65,7 @@ class WalletCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         # current user is owner func
         serializer.save(owner=self.request.user, name=walletname.NameGen())
+
 
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is avaliable only for admin'''

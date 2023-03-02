@@ -2,6 +2,7 @@ from rest_framework import serializers
 from wallets.models import Wallet
 from django.contrib.auth.models import User
 
+
 class WalletSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     name = serializers.ReadOnlyField()
@@ -18,10 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'wallets']
-        # fields = '__all__'
 
 
-class UserRegistrSerializer(serializers.ModelSerializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
@@ -30,5 +30,3 @@ class UserRegistrSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-
-

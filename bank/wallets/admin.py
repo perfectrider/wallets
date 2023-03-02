@@ -12,5 +12,3 @@ class TransactionAdmin(admin.ModelAdmin):
 
 admin.site.register(Wallet, WalletAdmin)
 admin.site.register(Transaction, TransactionAdmin)
-
-

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from wallets.models import Wallet, User
-from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer
+from wallets.models import Wallet, User, Transaction
+from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer, TransactionSerializer
 from rest_framework import mixins, generics, permissions
 from wallets.generators import walletname
 
@@ -35,3 +35,15 @@ class UsersList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
+
+
+class TransactionList(viewsets.ModelViewSet):
+    '''List of all transactions of current user. Available only for admin.'''
+
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Transaction.objects.all()
+        return queryset

@@ -50,6 +50,6 @@ class TransactionList(generics.ListCreateAPIView):
         queryset = Transaction.objects.all()
         walletname = self.kwargs['name']
         if walletname is not None:
-            queryset = Transaction.objects.filter(sender=walletname)
+            queryset = Transaction.objects.filter(sender__name=walletname)
         return queryset
 

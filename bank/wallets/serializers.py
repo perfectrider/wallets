@@ -33,8 +33,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # owner = serializers.StringRelatedField(source='sender.owner.username')
-    # owner_2 = serializers.StringRelatedField(source='receiver.owner.username')
+    sender = serializers.StringRelatedField()
+    receiver = serializers.StringRelatedField()
 
     class Meta:
         model = Transaction

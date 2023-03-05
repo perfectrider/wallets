@@ -3,6 +3,7 @@ from wallets.models import Wallet, User, Transaction
 from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer, TransactionSerializer
 from rest_framework import mixins, generics, permissions
 from wallets.generators import walletname
+from django.db.models import Q, Prefetch
 
 
 class UserRegister(generics.CreateAPIView):
@@ -32,18 +33,23 @@ class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is available only for admin'''
 
-    queryset = User.objects.all()
+    # queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
 
-class TransactionList(viewsets.ModelViewSet):
-    '''List of all transactions of current user. Available only for admin.'''
+class TransactionList(generics.ListCreateAPIView):
+    '''List of all transactions of current user. Available only for current user.'''
 
-    queryset = Transaction.objects.all()
+    # queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+
         queryset = Transaction.objects.all()
+        walletname = self.kwargs['name']
+        if walletname is not None:
+            queryset = Transaction.objects.filter(sender=walletname)
         return queryset
+

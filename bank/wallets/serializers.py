@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from wallets.models import Wallet
+from wallets.models import Wallet, Transaction
 from django.contrib.auth.models import User
 
 
@@ -30,3 +30,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    sender = serializers.StringRelatedField()
+    receiver = serializers.StringRelatedField()
+
+    class Meta:
+        model = Transaction
+        fields = ['id', 'sender', 'receiver', 'transfer_amount', 'commission', 'status', 'timestamp']

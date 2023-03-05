@@ -14,7 +14,7 @@ class UserRegister(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
+class WalletsList(viewsets.ModelViewSet):
     '''List of wallets. List is available only for admin'''
 
     serializer_class = WalletSerializer
@@ -33,7 +33,7 @@ class WalletsList(viewsets.ModelViewSet, mixins.CreateModelMixin):
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is available only for admin'''
 
-    # queryset = User.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -46,10 +46,8 @@ class TransactionList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-
         queryset = Transaction.objects.all()
         walletname = self.kwargs['name']
         if walletname is not None:
             queryset = Transaction.objects.filter(Q(sender__name=walletname) | Q(receiver__name=walletname))
         return queryset
-

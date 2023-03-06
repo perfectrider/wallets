@@ -34,7 +34,18 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 class TransactionSerializer(serializers.ModelSerializer):
     sender = serializers.StringRelatedField()
-    receiver = serializers.StringRelatedField()
+    receiver = serializers.CharField()
+    commission = serializers.ReadOnlyField()
+    status = serializers.ReadOnlyField()
+
+    def validate(self, data):
+        try:
+            data['sender'] = Wallet.objects.get(name=data['sender'])
+        except Exception as e:
+            print(e)
+            raise serializers.ValidationError(
+                "No such account from serializer")
+        return data
 
     class Meta:
         model = Transaction

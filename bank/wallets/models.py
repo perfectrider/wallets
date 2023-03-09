@@ -1,3 +1,4 @@
+import decimal
 from django.contrib.auth.models import User
 from django.db import models, transaction
 
@@ -46,7 +47,10 @@ class Transaction(models.Model):
             raise (ValueError('Receiver wallet is a sender wallet!'))
 
         with transaction.atomic():
-            sender.balance -= transfer_amount
+            if sender.owner == receiver.owner:
+                sender.balance -= transfer_amount
+            else:
+                sender.balance -= transfer_amount * decimal.Decimal(1.1)
             sender.save()
             receiver.balance += transfer_amount
             receiver.save()

@@ -30,6 +30,11 @@ class WalletsList(viewsets.ModelViewSet):
         # current user is owner func
         serializer.save(owner=self.request.user, name=walletname.namegen())
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is available only for admin'''
@@ -65,3 +70,13 @@ class TransactionList(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
+class AllTransactions(generics.ListAPIView):
+    '''List of all wallets transactions for current user'''
+
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Transaction.objects.filter(sender__owner=self.request.user)
+        return queryset

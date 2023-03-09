@@ -34,7 +34,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 class TransactionSerializer(serializers.ModelSerializer):
     # sender = serializers.StringRelatedField()
-    receiver = serializers.CharField()
+    receiver = serializers.PrimaryKeyRelatedField(queryset=Wallet.objects.all())
     commission = serializers.ReadOnlyField()
     status = serializers.ReadOnlyField()
 

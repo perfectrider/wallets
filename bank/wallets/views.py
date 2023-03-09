@@ -39,7 +39,7 @@ class UsersList(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
-class TransactionList(generics.ListCreateAPIView):
+class TransactionList(viewsets.ModelViewSet):
     '''List of all transactions of current user. Available only for current user.'''
 
     queryset = Transaction.objects.all()
@@ -47,7 +47,6 @@ class TransactionList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # queryset = Transaction.objects.all()
         walletname = self.kwargs['name']
         if walletname is not None:
             queryset = Transaction.objects.filter(Q(sender__name=walletname) | Q(receiver__name=walletname))

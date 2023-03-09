@@ -5,7 +5,6 @@ from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSe
 from rest_framework import mixins, generics, permissions
 from wallets.generators import walletname
 from django.db.models import Q
-from wallets.services import make_transfer
 
 
 class UserRegister(generics.CreateAPIView):
@@ -59,7 +58,11 @@ class TransactionList(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            make_transfer(**serializer.validated_data)
+            Transaction.make_transaction(**serializer.validated_data)
         except ValueError:
-            content = {'error': 'Not enough money'}
+            content = {'error': 'Not enough money on the current wallet!'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED,
+                        headers=headers)

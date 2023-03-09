@@ -30,6 +30,11 @@ class WalletsList(viewsets.ModelViewSet):
         # current user is owner func
         serializer.save(owner=self.request.user, name=walletname.namegen())
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UsersList(generics.ListAPIView):
     '''List of wallets. List is available only for admin'''

@@ -43,7 +43,7 @@ class Transaction(models.Model):
     def make_transaction(cls, sender, receiver, transfer_amount):
         if sender.balance < transfer_amount:
             raise (ValueError('Not enough money on the current wallet!'))
-        if sender.balance == receiver.balance:
+        if sender.currency != receiver.currency:
             raise (ValueError('Receiver wallet is a sender wallet!'))
 
         with transaction.atomic():

@@ -4,7 +4,7 @@ from wallets.models import Wallet, User, Transaction
 from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer, TransactionSerializer
 from rest_framework import mixins, generics, permissions
 from wallets.generators import walletname
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 class UserRegister(generics.CreateAPIView):
@@ -28,7 +28,12 @@ class WalletsList(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # current user is owner func
-        serializer.save(owner=self.request.user, name=walletname.namegen())
+        # queryset = User.objects.annotate(Count('wallets'))
+        owner = self.request.user
+        if owner.wallets.count() < 6:
+            serializer.save(owner=self.request.user, name=walletname.namegen())
+        else:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

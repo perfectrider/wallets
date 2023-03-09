@@ -70,3 +70,13 @@ class TransactionList(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
+class AllTransactions(generics.ListAPIView):
+    '''List of all wallets transactions for current user'''
+
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Transaction.objects.filter(sender__owner=self.request.user)
+        return queryset

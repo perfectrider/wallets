@@ -60,8 +60,8 @@ class TransactionList(generics.ListCreateAPIView):
         try:
             Transaction.make_transaction(**serializer.validated_data)
         except ValueError:
-            content = {'error': 'Not enough money on the current wallet!'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            # content = {'error': 'Not enough money on the current wallet!'}
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,

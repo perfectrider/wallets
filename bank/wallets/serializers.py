@@ -33,11 +33,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # sender = serializers.StringRelatedField()
-    receiver = serializers.PrimaryKeyRelatedField(queryset=Wallet.objects.all())
+    sender = serializers.SlugRelatedField(queryset=Wallet.objects.all(), slug_field='name')
+    receiver = serializers.SlugRelatedField(queryset=Wallet.objects.all(), slug_field='name')
     commission = serializers.ReadOnlyField()
     status = serializers.ReadOnlyField()
-
 
     class Meta:
         model = Transaction

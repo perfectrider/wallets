@@ -38,18 +38,20 @@ class Transaction(models.Model):
     status = models.CharField(max_length=6)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    # @classmethod
-    # def make_transaction(cls, sender, receiver, transfer_amount, commission):
-    #     if sender.balance < transfer_amount * commission:
-    #         raise(ValueError('Not enough money on the current wallet!'))
-    #
-    #     with transaction.atomic():
-    #         sender.balance -= transfer_amount * commission
-    #         sender.save()
-    #         receiver.balance += transfer_amount
-    #         receiver.save()
-    #         tran = cls.object.create(sender=sender,
-    #                                  receiver=receiver,
-    #                                  transfer_amount=transfer_amount,
-    #                                  commission=commission)
-    #     return tran, sender, receiver
+    @classmethod
+    def make_transaction(cls, sender, receiver, transfer_amount):
+        if sender.balance < transfer_amount:
+            raise (ValueError('Not enough money on the current wallet!'))
+        # if sender.balance == receiver.balance:
+        #     raise (ValueError('Receiver wallet as i sender wallet!'))
+
+        with transaction.atomic():
+            sender.balance -= transfer_amount
+            sender.save()
+            receiver.balance += transfer_amount
+            receiver.save()
+            tran = cls.objects.create(sender=sender,
+                                       receiver=receiver,
+                                       transfer_amount=transfer_amount,
+                                       )
+        return tran, sender, receiver

@@ -5,6 +5,7 @@ from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSe
 from rest_framework import mixins, generics, permissions
 from wallets.generators import walletname
 from django.db.models import Q, Count
+from django.http import Http404
 
 
 class UserRegister(generics.CreateAPIView):
@@ -27,11 +28,16 @@ class WalletsList(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        wallets = User.kwargs['wallets']
-        if len(wallets) < 6:
-            serializer.save(owner=self.request.user, name=walletname.namegen())
+        wallets = Wallet.objects.filter(owner=self.request.user).count()
+        if serializer.is_valid():
+            if wallets < 5:
+                if serializer.validated_data['currency'] == 'RUB':
+                    balance = 100
+                else:
+                    balance = 3
+                serializer.save(owner=self.request.user, name=walletname.namegen(), balance=balance)
         else:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+            raise Http404
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -60,19 +66,19 @@ class TransactionList(viewsets.ModelViewSet):
             queryset = Transaction.objects.filter(Q(sender__name=walletname) | Q(receiver__name=walletname))
         return queryset
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        try:
-            Transaction.make_transaction(**serializer.validated_data)
-        except ValueError:
-            # content = {'error': 'Not enough money on the current wallet!'}
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED,
-                        headers=headers)
+    # def create(self, request, *args, **kwargs):
+        # serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        #
+        # try:
+        #     Transaction.make_transaction(**serializer.validated_data)
+        # except ValueError:
+        #     content = {'error': 'Not enough money on the current wallet!'}
+        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        #
+        # headers = self.get_success_headers(serializer.data)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED,
+        #                 headers=headers)
 
 
 class AllTransactions(generics.ListAPIView):

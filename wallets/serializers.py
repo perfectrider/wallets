@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class WalletSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     name = serializers.ReadOnlyField()
+    balance = serializers.ReadOnlyField()
 
     class Meta:
         model = Wallet

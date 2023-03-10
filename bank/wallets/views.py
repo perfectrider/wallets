@@ -27,10 +27,8 @@ class WalletsList(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        # current user is owner func
-        # queryset = User.objects.annotate(Count('wallets'))
-        owner = self.request.user
-        if owner.wallets.count() < 6:
+        wallets = User.kwargs['wallets']
+        if len(wallets) < 6:
             serializer.save(owner=self.request.user, name=walletname.namegen())
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -75,6 +73,7 @@ class TransactionList(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
 
 class AllTransactions(generics.ListAPIView):
     '''List of all wallets transactions for current user'''

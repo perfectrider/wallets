@@ -1,3 +1,5 @@
+import decimal
+
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from wallets.models import Wallet, User, Transaction
@@ -67,59 +69,37 @@ class TransactionList(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+        sender = Wallet.objects.get(name=self.kwargs['name'])
+        transfer_amount = serializer.validated_data['transfer_amount']
+        receiver = serializer.validated_data['receiver']
         st = 'PAID'
-        trans = Wallet.objects.get(name=self.kwargs['name'])
-        amount = serializer.validated_data['transfer_amount']
+        commission = 10
+
         if serializer.is_valid():
 
-            print(trans.balance,                            # 91.58
-                  trans,                                    # H85NXULI
+            print(sender.balance,                           # 91.58
+                  sender.currency,                          # RUB
+                  receiver.currency,                        # USD
+                  sender.owner,                             # admin
+                  receiver.owner,                           # admin
                   self.kwargs['name'],                      # H85NXULI
                   serializer.validated_data['receiver'])    # 92FNIZMR
 
-            receiver = serializer.validated_data['receiver']
 
-            if amount < trans.balance:
-                st = 'FAIL'
-            serializer.save(sender=trans,
+            if transfer_amount > sender.balance or sender.currency != receiver.currency:
+                st = 'FAILED'
+            if sender.owner == receiver.owner:
+                commission = 0
+                sender.balance -= transfer_amount
+                receiver.balance += transfer_amount
+            else:
+                sender.balance -= transfer_amount * decimal.Decimal(1.1)
+                receiver.balance += transfer_amount
+            serializer.save(sender=sender,
                             receiver=receiver,
-                            transfer_amount=amount,
-                            commission=0,
+                            transfer_amount=transfer_amount,
+                            commission=commission,
                             status=st)
-
-
-        # with transaction.atomic():
-        #     if sender.owner == receiver.owner:
-        #         sender.balance -= transfer_amount
-        #     else:
-        #         sender.balance -= transfer_amount * decimal.Decimal(1.1)
-        #     sender.save()
-        #     receiver.balance += transfer_amount
-        #     receiver.save()
-        #     tran = cls.objects.create(sender=sender,
-        #                               receiver=receiver,
-        #                               transfer_amount=transfer_amount,
-        #                               status='PAID'
-        #                               )
-
-
-
-
-
-
-    # def create(self, request, *args, **kwargs):
-        # serializer = self.get_serializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        #
-        # try:
-        #     Transaction.make_transaction(**serializer.validated_data)
-        # except ValueError:
-        #     content = {'error': 'Not enough money on the current wallet!'}
-        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        #
-        # headers = self.get_success_headers(serializer.data)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED,
-        #                 headers=headers)
 
 
 class AllTransactions(generics.ListAPIView):

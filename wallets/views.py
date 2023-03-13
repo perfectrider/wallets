@@ -1,5 +1,6 @@
 import decimal
 
+from django.db import transaction
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from wallets.models import Wallet, User, Transaction
@@ -85,25 +86,25 @@ class TransactionList(viewsets.ModelViewSet):
                   self.kwargs['name'],                      # H85NXULI
                   serializer.validated_data['receiver'])    # 92FNIZMR
 
-
-            if transfer_amount > sender.balance or sender.currency != receiver.currency:
-                st = 'FAILED'
-            if sender.owner == receiver.owner:
-                commission = 0
-                sender.balance -= transfer_amount
-                sender.save()
-                receiver.balance += transfer_amount
-                receiver.save()
-            else:
-                sender.balance -= transfer_amount * decimal.Decimal(1.1)
-                sender.save()
-                receiver.balance += transfer_amount
-                receiver.save()
-            serializer.save(sender=sender,
-                            receiver=receiver,
-                            transfer_amount=transfer_amount,
-                            commission=commission,
-                            status=st)
+            with transaction.atomic():
+                if transfer_amount > sender.balance or sender.currency != receiver.currency:
+                    st = 'FAILED'
+                if sender.owner == receiver.owner:
+                    commission = 0
+                    sender.balance -= transfer_amount
+                    sender.save()
+                    receiver.balance += transfer_amount
+                    receiver.save()
+                else:
+                    sender.balance -= transfer_amount * decimal.Decimal(1.1)
+                    sender.save()
+                    receiver.balance += transfer_amount
+                    receiver.save()
+                serializer.save(sender=sender,
+                                receiver=receiver,
+                                transfer_amount=transfer_amount,
+                                commission=commission,
+                                status=st)
 
 
 class AllTransactions(generics.ListAPIView):

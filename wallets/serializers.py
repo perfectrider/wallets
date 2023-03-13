@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class WalletSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     name = serializers.ReadOnlyField()
+    balance = serializers.ReadOnlyField()
 
     class Meta:
         model = Wallet
@@ -33,11 +34,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # sender = serializers.StringRelatedField()
-    receiver = serializers.PrimaryKeyRelatedField(queryset=Wallet.objects.all())
+    sender = serializers.ReadOnlyField(source='sender.name')
+    receiver = serializers.SlugRelatedField(queryset=Wallet.objects.all(), slug_field='name')
     commission = serializers.ReadOnlyField()
     status = serializers.ReadOnlyField()
-
 
     class Meta:
         model = Transaction

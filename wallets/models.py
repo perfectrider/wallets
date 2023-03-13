@@ -1,6 +1,5 @@
-import decimal
 from django.contrib.auth.models import User
-from django.db import models, transaction
+from django.db import models
 
 
 class Wallet(models.Model):
@@ -39,23 +38,3 @@ class Transaction(models.Model):
     status = models.CharField(max_length=6)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    @classmethod
-    def make_transaction(cls, sender, receiver, transfer_amount):
-        if sender.balance < transfer_amount:
-            raise (ValueError('Not enough money on the current wallet!'))
-        if sender.balance == receiver.balance:
-            raise (ValueError('Receiver wallet is a sender wallet!'))
-
-        with transaction.atomic():
-            if sender.owner == receiver.owner:
-                sender.balance -= transfer_amount
-            else:
-                sender.balance -= transfer_amount * decimal.Decimal(1.1)
-            sender.save()
-            receiver.balance += transfer_amount
-            receiver.save()
-            tran = cls.objects.create(sender=sender,
-                                       receiver=receiver,
-                                       transfer_amount=transfer_amount,
-                                       )
-        return tran, sender, receiver

@@ -1,5 +1,5 @@
 """
-ASGI config for bank project.
+ASGI config for 22 project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

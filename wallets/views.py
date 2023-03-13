@@ -66,6 +66,47 @@ class TransactionList(viewsets.ModelViewSet):
             queryset = Transaction.objects.filter(Q(sender__name=walletname) | Q(receiver__name=walletname))
         return queryset
 
+    def perform_create(self, serializer):
+        st = 'PAID'
+        trans = Wallet.objects.get(name=self.kwargs['name'])
+        amount = serializer.validated_data['transfer_amount']
+        if serializer.is_valid():
+
+            print(trans.balance,                            # 91.58
+                  trans.name,                               # H85NXULI
+                  self.kwargs['name'],                      # H85NXULI
+                  serializer.validated_data['receiver'])    # 92FNIZMR
+
+            receiver = serializer.validated_data['receiver']
+
+            if amount < trans.balance:
+                st = 'FAIL'
+            serializer.save(sender=trans.name,
+                            receiver=receiver,
+                            transfer_amount=amount,
+                            comission=0,
+                            status=st)
+
+
+        # with transaction.atomic():
+        #     if sender.owner == receiver.owner:
+        #         sender.balance -= transfer_amount
+        #     else:
+        #         sender.balance -= transfer_amount * decimal.Decimal(1.1)
+        #     sender.save()
+        #     receiver.balance += transfer_amount
+        #     receiver.save()
+        #     tran = cls.objects.create(sender=sender,
+        #                               receiver=receiver,
+        #                               transfer_amount=transfer_amount,
+        #                               status='PAID'
+        #                               )
+
+
+
+
+
+
     # def create(self, request, *args, **kwargs):
         # serializer = self.get_serializer(data=request.data)
         # serializer.is_valid(raise_exception=True)

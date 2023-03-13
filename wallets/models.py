@@ -39,36 +39,36 @@ class Transaction(models.Model):
     status = models.CharField(max_length=6)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    @classmethod
-    def make_transaction(cls, sender, receiver, transfer_amount):
-        print(sender.balance, transfer_amount)
-        if sender.balance < transfer_amount:
-            cls.objects.create(sender=sender,
-                               receiver=receiver,
-                               transfer_amount=transfer_amount,
-                               status='FAIL'
-                               )
-            raise ValueError('Not enough money on the current wallet!')
-        print(sender.currency, receiver.currency)
-        if sender.currency != receiver.currency:
-            cls.objects.create(sender=sender,
-                               receiver=receiver,
-                               transfer_amount=transfer_amount,
-                               status='FAIL'
-                               )
-            raise ValueError('Receiver wallet is a sender wallet!')
-
-        with transaction.atomic():
-            if sender.owner == receiver.owner:
-                sender.balance -= transfer_amount
-            else:
-                sender.balance -= transfer_amount * decimal.Decimal(1.1)
-            sender.save()
-            receiver.balance += transfer_amount
-            receiver.save()
-            tran = cls.objects.create(sender=sender,
-                                      receiver=receiver,
-                                      transfer_amount=transfer_amount,
-                                      status='PAID'
-                                      )
-        return tran, sender, receiver,
+    # @classmethod
+    # def make_transaction(cls, sender, receiver, transfer_amount):
+    #     print(sender.balance, transfer_amount)
+    #     if sender.balance < transfer_amount:
+    #         cls.objects.create(sender=sender,
+    #                            receiver=receiver,
+    #                            transfer_amount=transfer_amount,
+    #                            status='FAIL'
+    #                            )
+    #         raise ValueError('Not enough money on the current wallet!')
+    #     print(sender.currency, receiver.currency)
+    #     if sender.currency != receiver.currency:
+    #         cls.objects.create(sender=sender,
+    #                            receiver=receiver,
+    #                            transfer_amount=transfer_amount,
+    #                            status='FAIL'
+    #                            )
+    #         raise ValueError('Receiver wallet is a sender wallet!')
+    #
+    #     with transaction.atomic():
+    #         if sender.owner == receiver.owner:
+    #             sender.balance -= transfer_amount
+    #         else:
+    #             sender.balance -= transfer_amount * decimal.Decimal(1.1)
+    #         sender.save()
+    #         receiver.balance += transfer_amount
+    #         receiver.save()
+    #         tran = cls.objects.create(sender=sender,
+    #                                   receiver=receiver,
+    #                                   transfer_amount=transfer_amount,
+    #                                   status='PAID'
+    #                                   )
+    #     return tran, sender, receiver,

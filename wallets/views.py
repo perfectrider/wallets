@@ -1,14 +1,13 @@
-import decimal
-
 from django.db import transaction
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from wallets.models import Wallet, User, Transaction
 from wallets.serializers import WalletSerializer, UserSerializer, UserRegisterSerializer, TransactionSerializer
-from rest_framework import mixins, generics, permissions
+from rest_framework import generics, permissions
 from wallets.generators import walletname
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import Http404
+import decimal
 
 
 class UserRegister(generics.CreateAPIView):
@@ -70,6 +69,8 @@ class TransactionList(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+        '''Сreating of transactions between wallets with several statements of logic'''
+
         sender = Wallet.objects.get(name=self.kwargs['name'])
         transfer_amount = serializer.validated_data['transfer_amount']
         receiver = serializer.validated_data['receiver']
@@ -78,13 +79,14 @@ class TransactionList(viewsets.ModelViewSet):
 
         if serializer.is_valid():
 
-            print(sender.balance,                           # 91.58
-                  sender.currency,                          # RUB
-                  receiver.currency,                        # USD
-                  sender.owner,                             # admin
-                  receiver.owner,                           # admin
-                  self.kwargs['name'],                      # H85NXULI
-                  serializer.validated_data['receiver'])    # 92FNIZMR
+            # print(sender.balance,                           # 91.58
+            #       sender.currency,                          # RUB
+            #       receiver.currency,                        # USD
+            #       sender.owner,                             # admin
+            #       receiver.owner,                           # admin
+            #       self.kwargs['name'],                      # H85NXULI
+            #       serializer.validated_data['receiver'])    # 92FNIZMR
+            # This commented string are used in development process for check out of unpacked values
 
             with transaction.atomic():
                 if transfer_amount > sender.balance or sender.currency != receiver.currency:

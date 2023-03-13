@@ -73,7 +73,7 @@ class TransactionList(viewsets.ModelViewSet):
         if serializer.is_valid():
 
             print(trans.balance,                            # 91.58
-                  trans.name,                               # H85NXULI
+                  trans,                                    # H85NXULI
                   self.kwargs['name'],                      # H85NXULI
                   serializer.validated_data['receiver'])    # 92FNIZMR
 
@@ -81,10 +81,10 @@ class TransactionList(viewsets.ModelViewSet):
 
             if amount < trans.balance:
                 st = 'FAIL'
-            serializer.save(sender=trans.name,
+            serializer.save(sender=trans,
                             receiver=receiver,
                             transfer_amount=amount,
-                            comission=0,
+                            commission=0,
                             status=st)
 
 

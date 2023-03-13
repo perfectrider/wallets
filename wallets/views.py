@@ -91,10 +91,14 @@ class TransactionList(viewsets.ModelViewSet):
             if sender.owner == receiver.owner:
                 commission = 0
                 sender.balance -= transfer_amount
+                sender.save()
                 receiver.balance += transfer_amount
+                receiver.save()
             else:
                 sender.balance -= transfer_amount * decimal.Decimal(1.1)
+                sender.save()
                 receiver.balance += transfer_amount
+                receiver.save()
             serializer.save(sender=sender,
                             receiver=receiver,
                             transfer_amount=transfer_amount,
